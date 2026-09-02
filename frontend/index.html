@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI-Based Explainable Health Risk Prediction System for Diabetes and Cardiovascular Disease using a unified patient health profile.">
+  <title>AI-Based Explainable Health Risk Prediction System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="header" id="main-header">
+    <div class="nav-container">
+      <a href="#home" class="nav-brand" id="brand-link" aria-label="AI Health Risk Home">
+        <span class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </span>
+        <span class="brand-text">AI Health Risk</span>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="nav-menu" id="nav-menu" aria-label="Main Navigation">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="#home" class="nav-link active" id="nav-home">Home</a></li>
+          <li class="nav-item"><a href="#overview" class="nav-link" id="nav-overview">Overview</a></li>
+          <li class="nav-item"><a href="#features" class="nav-link" id="nav-features">Features</a></li>
+          <li class="nav-item"><a href="#how-it-works" class="nav-link" id="nav-how-it-works">How It Works</a></li>
+          <li class="nav-item"><a href="#about" class="nav-link" id="nav-about">About</a></li>
+          <li class="nav-item"><a href="#development-status" class="nav-link" id="nav-status">Status</a></li>
+          <li class="nav-item"><a href="assessment.html" class="nav-link nav-btn-status" id="nav-start-btn">Start Assessment</a></li>
+        </ul>
+      </nav>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-nav">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+      <ul class="mobile-nav-list">
+        <li><a href="#home" class="mobile-nav-link" id="mob-nav-home">Home</a></li>
+        <li><a href="#overview" class="mobile-nav-link" id="mob-nav-overview">Overview</a></li>
+        <li><a href="#features" class="mobile-nav-link" id="mob-nav-features">Features</a></li>
+        <li><a href="#how-it-works" class="mobile-nav-link" id="mob-nav-how-it-works">How It Works</a></li>
+        <li><a href="#about" class="mobile-nav-link" id="mob-nav-about">About</a></li>
+        <li><a href="#development-status" class="mobile-nav-link" id="mob-nav-status">Status</a></li>
+        <li><a href="assessment.html" class="mobile-nav-link" id="mob-nav-assessment" style="color: var(--accent-cyan); font-weight: 700;">Start Health Assessment →</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. Hero Section -->
+    <section class="hero-section" id="home">
+      <div class="hero-backdrop" aria-hidden="true"></div>
+      <div class="content-container">
+        <div class="hero-content">
+          <div class="badge-pill">
+            <span class="pulse-dot"></span>
+            Academic Research Project • 30% Review Milestone
+          </div>
+          
+          <h1 class="hero-title">AI-Based Health Risk Prediction</h1>
+          
+          <p class="hero-description">
+            A unified clinical risk assessment architecture designed to evaluate the risk of both <strong>Diabetes</strong> and <strong>Cardiovascular Disease (CVD)</strong> from a single, standardized patient health profile.
+          </p>
+
+          <p class="hero-subtext">
+            Eliminating fragmented multi-form workflows through unified patient data intake, dual machine-learning processing, and planned explainable AI (SHAP).
+          </p>
+
+          <div class="hero-actions">
+            <a href="assessment.html" class="btn btn-primary btn-large" id="btn-start-assessment">
+              <span>Start Health Assessment</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+            <a href="#how-it-works" class="btn btn-secondary btn-large" id="btn-how-it-works-hero">
+              <span>How It Works</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Live API Status Card -->
+          <div class="api-live-card" id="api-status-bar">
+            <div class="api-live-indicator">
+              <span class="status-indicator-dot" id="backend-status-dot"></span>
+              <span class="api-live-text" id="backend-status-text">Checking Backend API Status (Port 8001)...</span>
+            </div>
+            <div class="api-live-badge" id="backend-status-badge">API: Connecting</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Project Overview Section -->
+    <section class="section section-overview" id="overview">
+      <div class="content-container">
+        <div class="section-header">
+          <span class="section-tag">Architecture Concept</span>
+          <h2 class="section-title">Project Overview</h2>
+          <p class="section-subtitle">
+            A unified predictive framework built to streamline multi-disease risk evaluation in modern healthcare workflows.
+          </p>
+        </div>
+
+        <div class="overview-grid">
+          <div class="overview-card main-concept">
+            <div class="overview-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+            </div>
+            <h3>Unified Input, Dual Target Assessment</h3>
+            <p>
+              Traditional risk prediction tools require healthcare providers or individuals to fill out separate, redundant questionnaires for every condition. This system is architected around <strong>one unified patient health profile</strong> containing demographics, vital signs, physical measurements, laboratory indicators, and lifestyle factors.
+            </p>
+            <p>
+              The unified profile is mapped and routed into two dedicated machine-learning pipelines:
+            </p>
+            <ul class="concept-list">
+              <li>
+                <strong>Diabetes Risk Pipeline:</strong> Analyzes glucose levels, BMI, insulin factors, age, and metabolic indicators.
+              </li>
+              <li>
+                <strong>Cardiovascular Disease (CVD) Pipeline:</strong> Analyzes blood pressure, cholesterol ratios, vascular history, and lifestyle factors.
+              </li>
+            </ul>
+          </div>
+
+          <div class="overview-card highlight-concept">
+            <div class="overview-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+            </div>
+            <h3>Unified Dashboard Presentation</h3>
+            <p>
+              Predictions and risk scores are consolidated into a single unified results dashboard, giving clinicians and patients a holistic view of metabolic and cardiovascular risks simultaneously.
+            </p>
+            <div class="info-note">
+              <strong>Academic Milestone Note:</strong> The current 30% prototype uses deterministic clinical heuristics to demonstrate the complete end-to-end data pipeline. Real ML models will be trained on medical datasets in subsequent phases.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Key Features Section -->
+    <section class="section section-features" id="features">
+      <div class="content-container">
+        <div class="section-header">
+          <span class="section-tag">Core Capabilities</span>
+          <h2 class="section-title">Key Architectural Features</h2>
+          <p class="section-subtitle">
+            Engineered around medical data cohesion, targeted ML specialization, and interpretable outcomes.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Card 1 -->
+          <div class="feature-card">
+            <div class="feature-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7.5" r="4"></circle>
+                <polyline points="17 11 19 13 23 9"></polyline>
+              </svg>
+            </div>
+            <div class="feature-badge current">Implemented</div>
+            <h3 class="feature-title">Unified Patient Data</h3>
+            <p class="feature-desc">
+              A single patient health profile provides all data required across the prediction pipelines, eliminating duplicate data entry and disconnected patient records.
+            </p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="feature-card">
+            <div class="feature-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 20V10"></path>
+                <path d="M12 20V4"></path>
+                <path d="M6 20v-6"></path>
+              </svg>
+            </div>
+            <div class="feature-badge current">Prototype Pipeline</div>
+            <h3 class="feature-title">Dual Risk Assessment</h3>
+            <p class="feature-desc">
+              The unified patient data is processed concurrently by specialized prediction routines dedicated to Diabetes and Cardiovascular Disease risk evaluation.
+            </p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="feature-card">
+            <div class="feature-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div class="feature-badge planned">Planned Stage</div>
+            <h3 class="feature-title">Explainable AI (SHAP)</h3>
+            <p class="feature-desc">
+              The future system will integrate explainable AI techniques such as SHAP (SHapley Additive exPlanations) to transparently show which clinical features influenced each risk prediction.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. How It Works Section -->
+    <section class="section section-workflow" id="how-it-works">
+      <div class="content-container">
+        <div class="section-header">
+          <span class="section-tag">Pipeline Workflow</span>
+          <h2 class="section-title">How It Works</h2>
+          <p class="section-subtitle">
+            An end-to-end data flow from single patient health intake to explainable dual risk intelligence.
+          </p>
+        </div>
+
+        <div class="workflow-container">
+          <!-- Step 01 -->
+          <div class="workflow-step">
+            <div class="step-badge">01</div>
+            <div class="step-card">
+              <div class="step-status-tag current-tag">Implemented Intake</div>
+              <h3 class="step-title">Unified Patient Health Data</h3>
+              <p class="step-desc">
+                Demographics, vitals, lab readings, lifestyle factors, and clinical history are collected into a single unified health record.
+              </p>
+            </div>
+          </div>
+
+          <div class="workflow-arrow" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <polyline points="19 12 12 19 5 12"></polyline>
+            </svg>
+          </div>
+
+          <!-- Step 02 -->
+          <div class="workflow-step">
+            <div class="step-badge">02</div>
+            <div class="step-card">
+              <div class="step-status-tag current-tag">Data Routing</div>
+              <h3 class="step-title">Data Processing &amp; Feature Mapping</h3>
+              <p class="step-desc">
+                Automated data validation, BMI computation, and feature routing prepare the inputs for disease-specific model requirements.
+              </p>
+            </div>
+          </div>
+
+          <div class="workflow-arrow" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <polyline points="19 12 12 19 5 12"></polyline>
+            </svg>
+          </div>
+
+          <!-- Step 03 -->
+          <div class="workflow-step">
+            <div class="step-badge">03</div>
+            <div class="step-card dual-model-card">
+              <div class="step-status-tag current-tag">Prototype Pipeline</div>
+              <h3 class="step-title">Diabetes ML Model &amp; Cardiovascular ML Model</h3>
+              <p class="step-desc">
+                Two dedicated machine-learning models process their respective feature vectors concurrently to compute calibrated risk probabilities.
+              </p>
+            </div>
+          </div>
+
+          <div class="workflow-arrow" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <polyline points="19 12 12 19 5 12"></polyline>
+            </svg>
+          </div>
+
+          <!-- Step 04 -->
+          <div class="workflow-step">
+            <div class="step-badge">04</div>
+            <div class="step-card">
+              <div class="step-status-tag current-tag">Implemented Dashboard</div>
+              <h3 class="step-title">Unified Risk Results</h3>
+              <p class="step-desc">
+                Consolidated risk scores, categorical stratifications (Low/Moderate/High), and clinical summary indicators are synthesized into one view.
+              </p>
+            </div>
+          </div>
+
+          <div class="workflow-arrow" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <polyline points="19 12 12 19 5 12"></polyline>
+            </svg>
+          </div>
+
+          <!-- Step 05 -->
+          <div class="workflow-step">
+            <div class="step-badge">05</div>
+            <div class="step-card">
+              <div class="step-status-tag future-tag">Planned Stage</div>
+              <h3 class="step-title">Explainable AI (SHAP)</h3>
+              <p class="step-desc">
+                Feature importance values and individual factor contributions are generated to provide transparent, interpretable reasoning for clinical validation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. About Section -->
+    <section class="section section-about" id="about">
+      <div class="content-container">
+        <div class="section-header">
+          <span class="section-tag">Project Scope</span>
+          <h2 class="section-title">About the Project</h2>
+          <p class="section-subtitle">
+            An academic research endeavor targeting early non-communicable disease risk identification through artificial intelligence.
+          </p>
+        </div>
+
+        <div class="about-card">
+          <div class="about-text-block">
+            <h3>Academic Background &amp; Motivation</h3>
+            <p>
+              This is a final-year academic engineering project titled <strong>"AI-Based Explainable Health Risk Prediction System for Diabetes and Cardiovascular Disease"</strong>. Non-communicable conditions like diabetes and cardiovascular disease share interconnected metabolic risk factors but are frequently evaluated in isolation.
+            </p>
+            <p>
+              Our research demonstrates how a unified patient representation combined with specialized machine-learning architectures and SHAP explainability can streamline early risk detection.
+            </p>
+            
+            <div class="about-disease-targets">
+              <div class="target-box">
+                <div class="target-title">Target Area 1: Diabetes</div>
+                <div class="target-desc">Early identification of type-2 diabetes risk based on glycemic indicators, body composition, and lifestyle predictors.</div>
+              </div>
+              <div class="target-box">
+                <div class="target-title">Target Area 2: Cardiovascular Disease</div>
+                <div class="target-desc">Risk estimation for cardiovascular conditions utilizing hemodynamic metrics, lipid profiles, and patient history.</div>
+              </div>
+            </div>
+
+            <div class="ehr-future-box">
+              <strong>Future Hospital / EHR Database Integration Architecture:</strong>
+              <p>
+                In the future, authorized hospital/EHR systems can provide patient information to the same unified data-processing pipeline via Patient ID. Manual data entry is used for the current prototype.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Development Status Section -->
+    <section class="section section-status" id="development-status">
+      <div class="content-container">
+        <div class="section-header">
+          <span class="section-tag">Milestone Tracking</span>
+          <h2 class="section-title">Project Development Status</h2>
+          <p class="section-subtitle">
+            Review 1 milestone tracker (30% Target Completion) detailing implemented components and scheduled upcoming phases.
+          </p>
+        </div>
+
+        <div class="status-grid">
+          <!-- Implemented Components -->
+          <div class="status-column completed-col">
+            <div class="status-col-header">
+              <span class="status-col-icon">✓</span>
+              <h3>Currently Implemented (Review 1)</h3>
+            </div>
+            <ul class="status-checklist">
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Project architecture &amp; modular directory layout</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Frontend foundation (HTML / Vanilla CSS / Vanilla JS)</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Backend API foundation (FastAPI server on port 8001)</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Professional responsive landing page</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Unified patient health input system (6 sections)</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Client-side clinical range validation</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Automatic real-time BMI calculation</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Unified patient data structure &amp; Pydantic schemas</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Trained Diabetes classification pipeline &amp; preprocessor</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Trained CVD classification pipeline &amp; preprocessor</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Independent feature mappers from unified patient object</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Model-estimated risk probability calculation</span>
+              </li>
+              <li class="status-item done">
+                <span class="status-check">✓</span>
+                <span class="status-name">Unified results presentation dashboard</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Planned Stages -->
+          <div class="status-column pending-col">
+            <div class="status-col-header">
+              <span class="status-col-icon">○</span>
+              <h3>Next Development Phase</h3>
+            </div>
+            <ul class="status-checklist">
+              <li class="status-item pending">
+                <span class="status-circle">○</span>
+                <span class="status-name">Real diabetes dataset curation</span>
+              </li>
+              <li class="status-item pending">
+                <span class="status-circle">○</span>
+                <span class="status-name">Real cardiovascular dataset curation</span>
+              </li>
+              <li class="status-item pending">
+                <span class="status-circle">○</span>
+                <span class="status-name">Data cleaning and preprocessing</span>
+              </li>
+              <li class="status-item pending">
+                <span class="status-circle">○</span>
+                <span class="status-name">Feature engineering &amp; scaling</span>
+              </li>
+              <li class="status-item pending">
+                <span class="status-circle">○</span>
+                <span class="status-name">Diabetes ML model training</span>
+              </li>
+              <li class="status-item pending">
+                <span class="status-circle">○</span>
+                <span class="status-name">Cardiovascular ML model training</span>
+              </li>
+              <li class="status-item pending">
+                <span class="status-circle">○</span>
+                <span class="status-name">Model evaluation &amp; cross-validation</span>
+              </li>
+              <li class="status-item pending">
+                <span class="status-circle">○</span>
+                <span class="status-name">Hyperparameter tuning</span>
+              </li>
+              <li class="status-item pending">
+                <span class="status-circle">○</span>
+                <span class="status-name">Model comparison &amp; ROC-AUC analysis</span>
+              </li>
+              <li class="status-item pending">
+                <span class="status-circle">○</span>
+                <span class="status-name">SHAP / XAI explainability integration</span>
+              </li>
+              <li class="status-item pending">
+                <span class="status-circle">○</span>
+                <span class="status-name">Hospital / EHR database integration</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Medical Disclaimer -->
+    <section class="section-disclaimer">
+      <div class="content-container">
+        <div class="disclaimer-card">
+          <div class="disclaimer-header">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span>Academic Research Prototype Disclaimer</span>
+          </div>
+          <p class="disclaimer-text">
+            This project is an academic research prototype. The system is intended for demonstration and research purposes and is not a substitute for professional medical diagnosis or treatment.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 8. Footer -->
+  <footer class="footer">
+    <div class="content-container footer-content">
+      <div class="footer-left">
+        <div class="footer-brand">
+          <span class="brand-icon small">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </span>
+          <span class="footer-title">AI-Based Explainable Health Risk Prediction System</span>
+        </div>
+        <p class="footer-subtext">Final-Year Academic Project • Diabetes &amp; Cardiovascular Disease</p>
+      </div>
+      <div class="footer-right">
+        <p class="copyright-text">© 2026 Academic Research Prototype. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

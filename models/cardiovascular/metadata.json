@@ -1,0 +1,84 @@
+{
+  "disease": "Cardiovascular Disease",
+  "dataset_name": "Cardiovascular Disease Dataset (Clinical Benchmark)",
+  "total_samples": 30000,
+  "train_samples": 24000,
+  "test_samples": 6000,
+  "features_raw": [
+    "age",
+    "height",
+    "weight",
+    "ap_hi",
+    "ap_lo",
+    "gender",
+    "cholesterol",
+    "gluc",
+    "smoke",
+    "alco",
+    "active"
+  ],
+  "features_transformed_count": 19,
+  "target": "cardio",
+  "model_type": "Logistic Regression",
+  "best_hyperparameters": {
+    "C": 0.1,
+    "solver": "lbfgs"
+  },
+  "cross_validation": "5-Fold Stratified K-Fold on Training Set",
+  "candidate_models_comparison": [
+    {
+      "model_name": "Logistic Regression",
+      "cv_accuracy": 0.6858,
+      "cv_precision": 0.5863,
+      "cv_recall": 0.685,
+      "cv_f1": 0.6318,
+      "cv_roc_auc": 0.7497
+    },
+    {
+      "model_name": "Random Forest",
+      "cv_accuracy": 0.683,
+      "cv_precision": 0.5875,
+      "cv_recall": 0.6525,
+      "cv_f1": 0.6183,
+      "cv_roc_auc": 0.7407
+    },
+    {
+      "model_name": "Gradient Boosting",
+      "cv_accuracy": 0.6975,
+      "cv_precision": 0.6513,
+      "cv_recall": 0.4979,
+      "cv_f1": 0.5643,
+      "cv_roc_auc": 0.743
+    },
+    {
+      "model_name": "HistGradient Boosting",
+      "cv_accuracy": 0.6835,
+      "cv_precision": 0.5863,
+      "cv_recall": 0.6647,
+      "cv_f1": 0.623,
+      "cv_roc_auc": 0.743
+    }
+  ],
+  "test_evaluation_metrics": {
+    "accuracy": 0.6843,
+    "precision": 0.5854,
+    "recall": 0.6777,
+    "f1_score": 0.6282,
+    "roc_auc": 0.747,
+    "confusion_matrix": [
+      [
+        2506,
+        1133
+      ],
+      [
+        761,
+        1600
+      ]
+    ]
+  },
+  "training_timestamp": "2026-09-03T01:49:21.056929",
+  "random_seed": 42,
+  "model_artifact_file": "cvd_model.joblib",
+  "preprocessor_artifact_file": "cvd_preprocessor.joblib",
+  "data_leakage_audit_passed": true
+}
