@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSmoothScroll();
   initScrollSpy();
   initApiHealthCheck();
+  initPageTransitions();
 });
 
 /**
@@ -129,7 +130,9 @@ function initScrollSpy() {
 /**
  * Backend API Health Check (Port 8001)
  */
-const API_BASE_URL = 'http://127.0.0.1:8001';
+const API_BASE_URL = (typeof window !== 'undefined' && window.location.origin && window.location.origin.startsWith('http'))
+  ? window.location.origin
+  : 'http://127.0.0.1:8001';
 
 async function initApiHealthCheck() {
   const dot = document.getElementById('backend-status-dot');
@@ -161,3 +164,62 @@ async function initApiHealthCheck() {
     console.info('Backend check status info:', error.message);
   }
 }
+
+/**
+ * Smooth Page Navigation Transition (Landing -> Assessment)
+ */
+function initPageTransitions() {
+  const startButtons = document.querySelectorAll(
+    '#btn-start-assessment, #nav-start-btn, #mob-nav-assessment, a[href="assessment.html"]'
+  );
+
+  let isNavigating = false;
+
+  startButtons.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      // Respect external or modified clicks (new tab / window)
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
+        return;
+      }
+
+      const targetUrl = btn.getAttribute('href') || 'assessment.html';
+
+      // Prevent duplicate multiple clicks
+      if (isNavigating) {
+        e.preventDefault();
+        return;
+      }
+
+      // Check user preference for reduced motion
+      const prefersReducedMotion = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReducedMotion) {
+        // Direct immediate navigation without animation delays
+        return;
+      }
+
+      e.preventDefault();
+      isNavigating = true;
+
+      // Provide immediate tactical button feedback
+      btn.classList.add('btn-navigating');
+
+      // Trigger smooth clinical exit animation on main page
+      document.body.classList.add('page-transition-exiting');
+
+      // Smoothly navigate after the exit transition completes (350ms)
+      setTimeout(() => {
+        window.location.href = targetUrl;
+      }, 350);
+    });
+  });
+
+  // Handle bfcache / browser back-forward history restoration
+  window.addEventListener('pageshow', () => {
+    document.body.classList.remove('page-transition-exiting');
+    startButtons.forEach((b) => b.classList.remove('btn-navigating'));
+    isNavigating = false;
+  });
+}
+

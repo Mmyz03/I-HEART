@@ -137,7 +137,10 @@ def predict_diabetes(patient: UnifiedPatientProfile) -> DiseaseRiskResult:
         risk_level = "Low"
         summary_note = "Model-estimated low risk profile with physiological indicators within standard baseline limits."
 
-    factors = explain_diabetes_factors(patient, prob)
+    try:
+        factors = explain_diabetes_factors(patient, prob)
+    except Exception:
+        factors = ["Clinical risk factor attributions temporarily unavailable."]
 
     return DiseaseRiskResult(
         risk_percentage=pct,

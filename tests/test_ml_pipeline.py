@@ -126,6 +126,59 @@ def test_unified_analyze_orchestrator():
     assert "academic" in response.disclaimer.lower()
 
 
+def test_diabetes_probability_range_and_classes():
+    """Verify diabetes probability is between 0 and 1, risk percentage between 1 and 99, valid class."""
+    patient = get_sample_patient(glucose=190.0)
+    model, preprocessor = get_diabetes_artifacts()
+    df = map_unified_to_diabetes_features(patient)
+    X_trans = preprocessor.transform(df)
+    prob = float(model.predict_proba(X_trans)[0, 1])
+    pred = int(model.predict(X_trans)[0])
+    assert 0.0 <= prob <= 1.0, f"Probability {prob} out of bounds"
+    assert pred in [0, 1], f"Predicted class {pred} invalid"
+
+    res = predict_diabetes(patient)
+    assert 1 <= res.risk_percentage <= 99
+    assert res.risk_level in ["Low", "Moderate", "High"]
+
+
+def test_cvd_probability_range_and_classes():
+    """Verify CVD probability is between 0 and 1, risk percentage between 1 and 99, valid class."""
+    patient = get_sample_patient(sbp=165, dbp=105)
+    model, preprocessor = get_cvd_artifacts()
+    df = map_unified_to_cvd_features(patient)
+    X_trans = preprocessor.transform(df)
+    prob = float(model.predict_proba(X_trans)[0, 1])
+    pred = int(model.predict(X_trans)[0])
+    assert 0.0 <= prob <= 1.0, f"Probability {prob} out of bounds"
+    assert pred in [0, 1], f"Predicted class {pred} invalid"
+
+    res = predict_cvd(patient)
+    assert 1 <= res.risk_percentage <= 99
+    assert res.risk_level in ["Low", "Moderate", "High"]
+
+
+def test_diabetes_missing_optional_hba1c():
+    """Verify pipeline safely handles patient with missing optional HbA1c."""
+    patient = get_sample_patient()
+    patient.laboratory.hba1c = None
+    res = predict_diabetes(patient)
+    assert res.risk_percentage >= 0
+    assert res.risk_level in ["Low", "Moderate", "High"]
+
+
+def test_cvd_missing_optional_lipids():
+    """Verify pipeline safely handles patient with missing optional lipid panel."""
+    patient = get_sample_patient()
+    patient.laboratory.total_cholesterol = None
+    patient.laboratory.hdl = None
+    patient.laboratory.ldl = None
+    patient.laboratory.triglycerides = None
+    res = predict_cvd(patient)
+    assert res.risk_percentage >= 0
+    assert res.risk_level in ["Low", "Moderate", "High"]
+
+
 if __name__ == "__main__":
     print("Running ML Pipeline & Backend Tests...")
     test_diabetes_artifacts_load()
@@ -142,4 +195,12 @@ if __name__ == "__main__":
     print("PASS: CVD prediction service test")
     test_unified_analyze_orchestrator()
     print("PASS: Unified analysis orchestrator test")
-    print("\nALL AUTOMATED TESTS PASSED SUCCESSFULLY (7/7)")
+    test_diabetes_probability_range_and_classes()
+    print("PASS: Diabetes probability range & classes test")
+    test_cvd_probability_range_and_classes()
+    print("PASS: CVD probability range & classes test")
+    test_diabetes_missing_optional_hba1c()
+    print("PASS: Diabetes missing optional HbA1c test")
+    test_cvd_missing_optional_lipids()
+    print("PASS: CVD missing optional lipids test")
+    print("\nALL AUTOMATED TESTS PASSED SUCCESSFULLY (11/11)")

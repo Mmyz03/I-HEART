@@ -4,7 +4,7 @@ Pydantic Schemas for Unified Patient Profile and Prediction Responses
 """
 
 from typing import Optional, List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 # -----------------------------------------------------------------------------
@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 # -----------------------------------------------------------------------------
 class Demographics(BaseModel):
     age: int = Field(..., ge=1, le=125, description="Patient age in years")
-    gender: str = Field(..., description="Biological sex / gender (e.g., Male, Female, Other)")
+    gender: str = Field(..., min_length=1, description="Biological sex / gender (e.g., Male, Female, Other)")
 
 
 # -----------------------------------------------------------------------------
@@ -23,6 +23,16 @@ class PhysicalMeasurements(BaseModel):
     weight_kg: float = Field(..., ge=15.0, le=350.0, description="Weight in kilograms")
     bmi: float = Field(..., ge=5.0, le=90.0, description="Body Mass Index calculated as weight/(height/100)^2")
 
+    @model_validator(mode="after")
+    def validate_bmi_consistency(self):
+        expected_bmi = self.weight_kg / ((self.height_cm / 100.0) ** 2)
+        if abs(self.bmi - expected_bmi) > 5.0:
+            raise ValueError(
+                f"Provided BMI ({self.bmi:.1f}) is inconsistent with height ({self.height_cm:.1f} cm) "
+                f"and weight ({self.weight_kg:.1f} kg). Expected approximately {expected_bmi:.1f}."
+            )
+        return self
+
 
 # -----------------------------------------------------------------------------
 # Section 3: Vital Signs
@@ -31,6 +41,15 @@ class VitalSigns(BaseModel):
     systolic_bp: int = Field(..., ge=60, le=260, description="Systolic Blood Pressure in mmHg")
     diastolic_bp: int = Field(..., ge=40, le=160, description="Diastolic Blood Pressure in mmHg")
     heart_rate: int = Field(..., ge=35, le=220, description="Resting Heart Rate in bpm")
+
+    @model_validator(mode="after")
+    def validate_bp_relationship(self):
+        if self.diastolic_bp >= self.systolic_bp:
+            raise ValueError(
+                f"Diastolic blood pressure ({self.diastolic_bp} mmHg) must be strictly lower than "
+                f"systolic blood pressure ({self.systolic_bp} mmHg)."
+            )
+        return self
 
 
 # -----------------------------------------------------------------------------
@@ -49,9 +68,9 @@ class LaboratoryData(BaseModel):
 # Section 5: Lifestyle Factors
 # -----------------------------------------------------------------------------
 class LifestyleData(BaseModel):
-    smoking: str = Field(..., description="Smoking status (Never, Former, Current)")
-    physical_activity: str = Field(..., description="Activity level (Sedentary, Moderate, Active)")
-    alcohol: str = Field(..., description="Alcohol consumption (None, Moderate, Frequent)")
+    smoking: str = Field(..., min_length=1, description="Smoking status (Never, Former, Current)")
+    physical_activity: str = Field(..., min_length=1, description="Activity level (Sedentary, Moderate, Active)")
+    alcohol: str = Field(..., min_length=1, description="Alcohol consumption (None, Moderate, Frequent)")
 
 
 # -----------------------------------------------------------------------------
@@ -68,7 +87,7 @@ class MedicalHistory(BaseModel):
 # Unified Patient Health Profile (Single Intake Schema)
 # -----------------------------------------------------------------------------
 class UnifiedPatientProfile(BaseModel):
-    patient_id: str = Field(..., description="Unique Patient Identifier or Reference Code")
+    patient_id: str = Field(..., min_length=1, description="Unique Patient Identifier or Reference Code")
     demographics: Demographics
     physical: PhysicalMeasurements
     vitals: VitalSigns

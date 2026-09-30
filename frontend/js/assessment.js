@@ -4,7 +4,9 @@
  * backend API submission (POST /api/analyze), and session storage handoff.
  */
 
-const API_BASE_URL = 'http://127.0.0.1:8001';
+const API_BASE_URL = (typeof window !== 'undefined' && window.location.origin && window.location.origin.startsWith('http'))
+  ? window.location.origin
+  : 'http://127.0.0.1:8001';
 
 document.addEventListener('DOMContentLoaded', () => {
   initBmiCalculator();

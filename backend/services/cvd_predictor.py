@@ -152,7 +152,10 @@ def predict_cvd(patient: UnifiedPatientProfile) -> DiseaseRiskResult:
         risk_level = "Low"
         summary_note = "Model-estimated low cardiovascular risk with optimal hemodynamic, lipid, and lifestyle metrics."
 
-    factors = explain_cvd_factors(patient, prob)
+    try:
+        factors = explain_cvd_factors(patient, prob)
+    except Exception:
+        factors = ["Clinical risk factor attributions temporarily unavailable."]
 
     return DiseaseRiskResult(
         risk_percentage=pct,
