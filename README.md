@@ -316,7 +316,7 @@ python tests/run_all_tests.py
 
 ---
 
-## 12. Local Development & Quick Start
+## 12. Local Development & Quick start
 
 ### 12.1 Prerequisites
 - Python `3.10+` (tested on Python `3.13`)
