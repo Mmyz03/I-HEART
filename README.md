@@ -15,7 +15,7 @@
 
 Traditional clinical assessment workflows require independent, disjointed questionnaires and diagnostic protocols for metabolic and cardiovascular conditions. This creates duplicate data entry, clinician fatigue, and fragmented risk visibility.
 
-**I-HEART (Intelligent Health Evaluation And Risk Tracking)** eliminates multi-form fragmentation through a **Unified Patient Input Architecture**. From a single patient record (demographics, physical measurements, vitals, laboratory panels, lifestyle, and history), specialized backend mappers isolate model-specific feature vectors, query independent machine learning pipelines, and synthesize dual risk probabilities into an integrated clinical dashboard.
+**I-HEART (Intelligent Health Evaluation And Risk Tracking)** eliminates multi-form fragmentation through a **Unified Patient Input Architecture**. From a single patient record (demographics, physical measurements, vitals, laboratory panels, lifestyle, and history), specialized backend mappers isolate model-specific feature vectors, query independent machine learning pipelines, and synthesize dual risk probabilities into an Integrated clinical dashboard.
 
 ```
                               UNIFIED PATIENT RECORD
