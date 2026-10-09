@@ -59,12 +59,36 @@
       "cv_roc_auc": 0.743
     }
   ],
+  "selected_operating_threshold": 0.48,
   "test_evaluation_metrics": {
+    "accuracy": 0.6792,
+    "precision": 0.5756,
+    "recall": 0.7031,
+    "f1_score": 0.6330,
+    "specificity": 0.6636,
+    "roc_auc": 0.7470,
+    "pr_auc": 0.6602,
+    "operating_threshold": 0.48,
+    "confusion_matrix": [
+      [
+        2415,
+        1224
+      ],
+      [
+        701,
+        1660
+      ]
+    ]
+  },
+  "baseline_test_metrics_threshold_0_50": {
     "accuracy": 0.6843,
     "precision": 0.5854,
     "recall": 0.6777,
     "f1_score": 0.6282,
-    "roc_auc": 0.747,
+    "specificity": 0.6887,
+    "roc_auc": 0.7470,
+    "pr_auc": 0.6602,
+    "operating_threshold": 0.5,
     "confusion_matrix": [
       [
         2506,
@@ -76,7 +100,7 @@
       ]
     ]
   },
-  "training_timestamp": "2026-09-03T01:49:21.056929",
+  "training_timestamp": "2026-10-07T11:46:43.079444",
   "random_seed": 42,
   "model_artifact_file": "cvd_model.joblib",
   "preprocessor_artifact_file": "cvd_preprocessor.joblib",

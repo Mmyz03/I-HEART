@@ -7,7 +7,11 @@ Loads saved model & preprocessor, evaluates on test data, generates detailed met
 from pathlib import Path
 import pandas as pd
 import numpy as np
-from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, accuracy_score
+from sklearn.metrics import (
+    classification_report, confusion_matrix, roc_auc_score,
+    accuracy_score, precision_score, recall_score, f1_score,
+    average_precision_score
+)
 import joblib
 
 try:
@@ -19,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 MODEL_DIR = BASE_DIR / "models" / "diabetes"
 
 
-def evaluate_saved_diabetes_model():
-    print("=" * 60)
+def evaluate_saved_diabetes_model(operating_threshold: float = 0.53):
+    print("=" * 65)
     print("DIABETES SAVED MODEL INDEPENDENT EVALUATION")
-    print("=" * 60)
+    print("=" * 65)
 
     model_path = MODEL_DIR / "diabetes_model.joblib"
     preprocessor_path = MODEL_DIR / "diabetes_preprocessor.joblib"
@@ -38,26 +42,52 @@ def evaluate_saved_diabetes_model():
     _, X_test, _, y_test = split_data(df, test_size=0.2, random_state=42)
 
     X_test_transformed = preprocessor.transform(X_test)
-    y_pred = model.predict(X_test_transformed)
     y_proba = model.predict_proba(X_test_transformed)[:, 1]
 
-    acc = accuracy_score(y_test, y_pred)
-    auc = roc_auc_score(y_test, y_proba)
-    cm = confusion_matrix(y_test, y_pred)
-    cr = classification_report(y_test, y_pred, target_names=["Non-Diabetic (0)", "Diabetic (1)"])
+    # Metrics at baseline threshold (0.50)
+    y_pred_base = (y_proba >= 0.50).astype(int)
+    cm_base = confusion_matrix(y_test, y_pred_base)
+    acc_base = accuracy_score(y_test, y_pred_base)
+    prec_base = precision_score(y_test, y_pred_base)
+    rec_base = recall_score(y_test, y_pred_base)
+    f1_base = f1_score(y_test, y_pred_base)
 
-    print(f"Loaded Model:        {type(model).__name__}")
-    print(f"Overall Accuracy:    {acc:.4f}")
-    print(f"ROC-AUC Score:       {auc:.4f}")
-    print("\nConfusion Matrix:")
-    print(f"                 Predicted 0    Predicted 1")
-    print(f"Actual 0 (No)    {cm[0, 0]:<14} {cm[0, 1]}")
-    print(f"Actual 1 (Yes)   {cm[1, 0]:<14} {cm[1, 1]}")
-    print("\nDetailed Classification Report:")
-    print(cr)
-    print("=" * 60)
+    # Metrics at optimized clinical operating threshold
+    y_pred_opt = (y_proba >= operating_threshold).astype(int)
+    cm_opt = confusion_matrix(y_test, y_pred_opt)
+    acc_opt = accuracy_score(y_test, y_pred_opt)
+    prec_opt = precision_score(y_test, y_pred_opt)
+    rec_opt = recall_score(y_test, y_pred_opt)
+    f1_opt = f1_score(y_test, y_pred_opt)
+    spec_opt = cm_opt[0, 0] / (cm_opt[0, 0] + cm_opt[0, 1])
 
-    return {"accuracy": acc, "roc_auc": auc, "confusion_matrix": cm, "report": cr}
+    roc_auc = roc_auc_score(y_test, y_proba)
+    pr_auc = average_precision_score(y_test, y_proba)
+
+    print(f"Loaded Model:              {type(model).__name__}")
+    print(f"ROC-AUC Score:             {roc_auc:.4f}")
+    print(f"PR-AUC (Avg Precision):    {pr_auc:.4f}")
+    print("\n--- BASELINE OPERATING POINT (Threshold: 0.50) ---")
+    print(f"Accuracy:    {acc_base:.4f} | Precision: {prec_base:.4f} | Recall: {rec_base:.4f} | F1: {f1_base:.4f}")
+    print(f"Confusion:   TN={cm_base[0, 0]}, FP={cm_base[0, 1]}, FN={cm_base[1, 0]}, TP={cm_base[1, 1]}")
+    print(f"\n--- OPTIMIZED CLINICAL OPERATING POINT (Threshold: {operating_threshold:.2f}) ---")
+    print(f"Accuracy:    {acc_opt:.4f} | Precision: {prec_opt:.4f} | Recall: {rec_opt:.4f} | F1: {f1_opt:.4f} | Specificity: {spec_opt:.4f}")
+    print(f"Confusion:   TN={cm_opt[0, 0]}, FP={cm_opt[0, 1]}, FN={cm_opt[1, 0]}, TP={cm_opt[1, 1]}")
+    print(f"\nDetailed Classification Report at Threshold {operating_threshold:.2f}:")
+    print(classification_report(y_test, y_pred_opt, target_names=["Non-Diabetic (0)", "Diabetic (1)"]))
+    print("=" * 65)
+
+    return {
+        "roc_auc": roc_auc,
+        "pr_auc": pr_auc,
+        "operating_threshold": operating_threshold,
+        "accuracy": acc_opt,
+        "precision": prec_opt,
+        "recall": rec_opt,
+        "f1_score": f1_opt,
+        "specificity": spec_opt,
+        "confusion_matrix": cm_opt
+    }
 
 
 if __name__ == "__main__":

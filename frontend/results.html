@@ -5,7 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Unified Health Risk Analysis Results Dashboard for Diabetes and Cardiovascular Disease - I-HEART Clinical AI Platform.">
   <title>Health Risk Analysis Results | I-HEART Clinical AI</title>
-  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Instant Theme Loader (Zero Flash of Wrong Theme) -->
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('iheart_theme');
+        if (savedTheme === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="css/style.css?v=4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,14 +32,13 @@
   <!-- Navigation Bar -->
   <header class="header" id="results-header">
     <div class="nav-container">
-      <a href="index.html" class="nav-brand" id="brand-link" aria-label="I-HEART Clinical AI Home">
+      <a href="javascript:void(0)" class="nav-brand" id="brand-link" role="button" tabindex="0" aria-label="Switch to light mode" title="Switch to light mode" aria-pressed="false">
         <span class="brand-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
           </svg>
         </span>
         <span class="brand-text">I-HEART</span>
-        <span class="brand-badge">[CLINICAL AI]</span>
       </a>
 
       <div class="header-right-nav">
@@ -58,7 +74,7 @@
       <div id="results-content-wrapper">
 
         <!-- Results Header Section -->
-        <div class="page-title-section">
+        <div class="page-title-section reveal-on-scroll">
           <div class="badge-pill">
             <span class="pulse-dot"></span>
             CLINICAL EVALUATION REPORT • DUAL-TARGET INFERENCE SYNTHESIS
@@ -78,7 +94,7 @@
         </div>
 
         <!-- 1. Patient Summary Card -->
-        <div class="results-patient-card">
+        <div class="results-patient-card reveal-on-scroll">
           <div class="patient-card-header">
             <div class="patient-title-group">
               <span class="patient-icon">
@@ -127,10 +143,10 @@
         </div>
 
         <!-- 2. Dual Disease Risk Prediction Cards Grid -->
-        <div class="risk-cards-grid">
+        <div class="risk-cards-grid reveal-stagger">
 
           <!-- DIABETES RISK CARD -->
-          <div class="disease-risk-card" id="card-diabetes">
+          <div class="disease-risk-card reveal-on-scroll" id="card-diabetes">
             <div class="risk-card-top">
               <div class="disease-header">
                 <span class="disease-tag">[METABOLIC DOMAIN // ML PIPELINE]</span>
@@ -168,13 +184,20 @@
               <ul class="factors-list" id="list-diabetes-factors">
                 <li>Evaluating metabolic parameters...</li>
               </ul>
+              <a href="#xai-section" class="btn-xai-jump" aria-label="Jump to detailed diabetes factor explanations">
+                <span>View Factor Explanations</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <polyline points="19 12 12 19 5 12"></polyline>
+                </svg>
+              </a>
             </div>
 
             <div class="pipeline-tag">Pipeline: Diabetes ML Specialization (8 Features)</div>
           </div>
 
           <!-- CARDIOVASCULAR DISEASE RISK CARD -->
-          <div class="disease-risk-card" id="card-cvd">
+          <div class="disease-risk-card reveal-on-scroll reveal-delay-2" id="card-cvd">
             <div class="risk-card-top">
               <div class="disease-header">
                 <span class="disease-tag">[CARDIOVASCULAR DOMAIN // ML PIPELINE]</span>
@@ -212,6 +235,13 @@
               <ul class="factors-list" id="list-cvd-factors">
                 <li>Evaluating hemodynamic parameters...</li>
               </ul>
+              <a href="#xai-section" class="btn-xai-jump" aria-label="Jump to detailed cardiovascular factor explanations">
+                <span>View Factor Explanations</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <polyline points="19 12 12 19 5 12"></polyline>
+                </svg>
+              </a>
             </div>
 
             <div class="pipeline-tag">Pipeline: Cardiovascular ML Specialization (11 Features)</div>
@@ -219,25 +249,130 @@
 
         </div>
 
-        <!-- 3. Explainable AI Feature Attribution Callout -->
-        <div class="xai-callout-card">
-          <div class="xai-callout-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="16" x2="12" y2="12"></line>
-              <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
-          </div>
-          <div class="xai-callout-body">
-            <h4>Explainable Risk Factor Attribution</h4>
-            <p>
-              Risk predictions are paired with evidence-based clinical factor attributions displayed in each disease panel above. Highlighted biomarkers indicate which specific metabolic or cardiovascular variables exceed normal reference ranges and drive elevated risk scores.
+        <!-- 3. Human-Understandable Explainable AI (XAI) Deep-Dive Section -->
+        <section class="xai-explanation-section reveal-on-scroll" id="xai-section" aria-labelledby="xai-section-title">
+          <div class="xai-section-header">
+            <div class="badge-pill xai-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <span>EXPLAINABLE CLINICAL AI • FACTOR ATTRIBUTION</span>
+            </div>
+            <h2 class="xai-section-title" id="xai-section-title">Why this risk was assessed</h2>
+            <p class="xai-section-description">
+              Your assessment is based on the health information you provided. The factors below were identified as the most relevant contributors to the current risk assessment.
             </p>
           </div>
-        </div>
+
+          <!-- Fallback Notice (Visible only if factor attribution is unavailable) -->
+          <div class="xai-fallback-alert" id="xai-fallback-alert" style="display: none;" role="alert">
+            <div class="fallback-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <div class="fallback-text">
+              <strong>Attribution Notice:</strong> Detailed factor attribution is currently unavailable, but your risk prediction was completed successfully.
+            </div>
+          </div>
+
+          <!-- Disease Explanation Panels Grid -->
+          <div class="xai-panels-grid reveal-stagger" id="xai-panels-container">
+            <!-- Diabetes Factors Column/Panel -->
+            <div class="xai-disease-panel xai-panel-diabetes reveal-on-scroll" id="xai-panel-diabetes">
+              <div class="xai-panel-header">
+                <span class="disease-tag">[METABOLIC EXPLANATION]</span>
+                <h3 class="xai-panel-title">Type 2 Diabetes Factors</h3>
+                <p class="xai-panel-subtitle">Primary clinical inputs influencing diabetes risk probability.</p>
+              </div>
+
+              <!-- Most Relevant Factors Group -->
+              <div class="xai-factor-group" id="group-diabetes-primary">
+                <h4 class="factor-group-heading">
+                  <span class="priority-indicator high-priority"></span>
+                  Most Relevant Factors
+                </h4>
+                <div class="factor-cards-list" id="cards-diabetes-primary">
+                  <!-- Dynamically populated via results.js -->
+                </div>
+              </div>
+
+              <!-- Other Relevant Factors Group -->
+              <div class="xai-factor-group" id="group-diabetes-secondary">
+                <h4 class="factor-group-heading">
+                  <span class="priority-indicator mod-priority"></span>
+                  Other Relevant Factors
+                </h4>
+                <div class="factor-cards-list" id="cards-diabetes-secondary">
+                  <!-- Dynamically populated via results.js -->
+                </div>
+              </div>
+            </div>
+
+            <!-- CVD Factors Column/Panel -->
+            <div class="xai-disease-panel xai-panel-cvd reveal-on-scroll reveal-delay-2" id="xai-panel-cvd">
+              <div class="xai-panel-header">
+                <span class="disease-tag">[CARDIOVASCULAR EXPLANATION]</span>
+                <h3 class="xai-panel-title">Cardiovascular Disease Factors</h3>
+                <p class="xai-panel-subtitle">Primary hemodynamic and lipid inputs influencing cardiovascular risk.</p>
+              </div>
+
+              <!-- Most Relevant Factors Group -->
+              <div class="xai-factor-group" id="group-cvd-primary">
+                <h4 class="factor-group-heading">
+                  <span class="priority-indicator high-priority"></span>
+                  Most Relevant Factors
+                </h4>
+                <div class="factor-cards-list" id="cards-cvd-primary">
+                  <!-- Dynamically populated via results.js -->
+                </div>
+              </div>
+
+              <!-- Other Relevant Factors Group -->
+              <div class="xai-factor-group" id="group-cvd-secondary">
+                <h4 class="factor-group-heading">
+                  <span class="priority-indicator mod-priority"></span>
+                  Other Relevant Factors
+                </h4>
+                <div class="factor-cards-list" id="cards-cvd-secondary">
+                  <!-- Dynamically populated via results.js -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic "What This Means" Clinical Synthesis Box -->
+          <div class="xai-synthesis-card reveal-on-scroll" id="xai-synthesis-container">
+            <div class="synthesis-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>CLINICAL SYNTHESIS</span>
+            </div>
+            <h3 class="synthesis-title">What this means</h3>
+            <p class="synthesis-narrative" id="xai-synthesis-text">
+              Evaluating personalized factor attributions...
+            </p>
+          </div>
+
+          <!-- Subtle Medical AI Disclaimer -->
+          <div class="xai-disclaimer-notice">
+            <p>
+              These explanations describe factors considered relevant to this assessment. They are not a medical diagnosis and should not be used as a substitute for professional medical advice.
+            </p>
+          </div>
+        </section>
 
         <!-- 4. Dashboard Action Buttons -->
-        <div class="results-action-bar">
+        <div class="results-action-bar reveal-on-scroll">
           <a href="assessment.html" class="btn btn-primary btn-large" id="btn-new-assessment">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -256,7 +391,7 @@
         </div>
 
         <!-- 5. Clinical Disclaimer -->
-        <div class="disclaimer-card" style="margin-top: 3rem;">
+        <div class="disclaimer-card reveal-on-scroll" style="margin-top: 3rem;">
           <div class="disclaimer-header">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
@@ -295,6 +430,16 @@
     </div>
   </footer>
 
+  <!-- Floating Back to Top Button -->
+  <button type="button" class="back-to-top-btn" id="btn-back-to-top" aria-label="Back to top" title="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="12" y1="19" x2="12" y2="5"></line>
+      <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+  </button>
+
+  <script src="js/theme.js"></script>
+  <script src="js/interactions.js"></script>
   <script src="js/results.js"></script>
 </body>
 </html>

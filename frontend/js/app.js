@@ -5,10 +5,8 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initMobileMenu();
-  initSmoothScroll();
-  initScrollSpy();
+  initNavigationIndicator();
   initApiHealthCheck();
-  initPageTransitions();
 });
 
 /**
@@ -64,67 +62,333 @@ function initMobileMenu() {
 }
 
 /**
- * Smooth Scroll handling for internal links
+ * Smooth Animated Active Navigation Indicator & Explicit Ordered Section ScrollSpy
+ * Navigation sequence:
+ * 01 Home (#home) -> 02 Overview (#overview) -> 03 Capabilities (#features)
+ * -> 04 Architecture (#how-it-works) -> 05 Clinical Scope (#about) -> 06 Telemetry (#development-status)
  */
-function initSmoothScroll() {
-  const internalLinks = document.querySelectorAll('a[href^="#"]');
+function initNavigationIndicator() {
+  const navList = document.querySelector('.nav-list');
+  const navLinks = document.querySelectorAll('.nav-menu .nav-link:not(.nav-btn-status)');
+  if (!navList || !navLinks.length) return;
 
-  internalLinks.forEach((link) => {
-    link.addEventListener('click', function (e) {
-      const targetId = this.getAttribute('href');
-      if (!targetId || targetId === '#') return;
+  // Exact ordered mapping of sections to nav links
+  const ORDERED_SECTIONS = [
+    { id: 'home', navId: 'nav-home', mobId: 'mob-nav-home' },
+    { id: 'overview', navId: 'nav-overview', mobId: 'mob-nav-overview' },
+    { id: 'features', navId: 'nav-features', mobId: 'mob-nav-features' },
+    { id: 'how-it-works', navId: 'nav-how-it-works', mobId: 'mob-nav-how-it-works' },
+    { id: 'about', navId: 'nav-about', mobId: 'mob-nav-about' },
+    { id: 'development-status', navId: 'nav-status', mobId: 'mob-nav-status' }
+  ];
 
-      const targetElement = document.querySelector(targetId);
-      if (targetElement) {
-        e.preventDefault();
-        targetElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
+  // Locate or create the shared sliding active indicator line
+  let indicator = document.getElementById('nav-indicator-slider');
+  if (!indicator) {
+    indicator = document.createElement('li');
+    indicator.className = 'nav-indicator-slider';
+    indicator.id = 'nav-indicator-slider';
+    indicator.setAttribute('aria-hidden', 'true');
+    navList.appendChild(indicator);
+  }
 
-        // Update URL hash cleanly without jumping
-        if (history.pushState) {
-          history.pushState(null, null, targetId);
-        } else {
-          location.hash = targetId;
+  let currentActiveId = 'home';
+  let isProgrammaticScroll = false;
+  let targetSectionId = null;
+  let scrollRafId = null;
+  let scrollSafetyTimer = null;
+
+  function getPrefersReducedMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function updateIndicator(activeLink, animate = true) {
+    if (!activeLink || !navList.contains(activeLink)) {
+      indicator.style.opacity = '0';
+      return;
+    }
+
+    const listRect = navList.getBoundingClientRect();
+    const linkRect = activeLink.getBoundingClientRect();
+
+    // Calculate left offset and exact width relative to navList
+    const leftOffset = linkRect.left - listRect.left;
+    const width = linkRect.width;
+
+    if (!animate || getPrefersReducedMotion()) {
+      indicator.style.transition = 'none';
+    } else {
+      indicator.style.transition = 'transform 300ms cubic-bezier(0.16, 1, 0.3, 1), width 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease';
+    }
+
+    indicator.style.transform = `translateX(${leftOffset}px)`;
+    indicator.style.width = `${width}px`;
+    indicator.style.opacity = '1';
+    indicator.classList.add('is-visible');
+  }
+
+  function setActiveSection(sectionId, animate = true) {
+    if (!sectionId) return;
+    const match = ORDERED_SECTIONS.find((item) => item.id === sectionId);
+    if (!match) return;
+
+    currentActiveId = sectionId;
+
+    // Update desktop links
+    navLinks.forEach((link) => {
+      if (link.id === match.navId || link.getAttribute('href') === `#${sectionId}`) {
+        link.classList.add('active');
+        updateIndicator(link, animate);
+      } else {
+        link.classList.remove('active');
+      }
+    });
+
+    // Update mobile links
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+    mobileLinks.forEach((mobLink) => {
+      if (mobLink.id === match.mobId || mobLink.getAttribute('href') === `#${sectionId}`) {
+        mobLink.classList.add('active');
+      } else {
+        mobLink.classList.remove('active');
+      }
+    });
+  }
+
+  // Set initial position on Home
+  setActiveSection('home', false);
+  requestAnimationFrame(() => {
+    const homeLink = document.getElementById('nav-home') || navLinks[0];
+    if (homeLink) updateIndicator(homeLink, false);
+  });
+
+  // Calculate active section based on deterministic manual scroll position
+  function computeActiveSection() {
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    const header = document.getElementById('main-header');
+    const headerHeight = header ? header.offsetHeight : 64;
+    const triggerOffset = headerHeight + 100;
+
+    // 1. Top Edge Case: At or near page top, Home is strictly active
+    if (scrollY < 120) {
+      return 'home';
+    }
+
+    // 2. Bottom Edge Case: Near the very bottom of the page, Telemetry is active
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    if (scrollY >= maxScroll - 60) {
+      return 'development-status';
+    }
+
+    // 3. Scan sections in exact order from top to bottom
+    let activeId = 'home';
+    for (let i = 0; i < ORDERED_SECTIONS.length; i++) {
+      const sectionElem = document.getElementById(ORDERED_SECTIONS[i].id);
+      if (sectionElem) {
+        const top = sectionElem.getBoundingClientRect().top;
+        if (top <= triggerOffset) {
+          activeId = ORDERED_SECTIONS[i].id;
         }
       }
+    }
+
+    return activeId;
+  }
+
+  // Manual scroll event handler throttled with requestAnimationFrame
+  let isTicking = false;
+  function handleScroll() {
+    // CRITICAL: When programmatic click navigation is running, scroll-spy is completely locked!
+    if (isProgrammaticScroll) return;
+
+    const activeId = computeActiveSection();
+    if (activeId !== currentActiveId) {
+      setActiveSection(activeId, true);
+    }
+    isTicking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!isTicking && !isProgrammaticScroll) {
+      window.requestAnimationFrame(handleScroll);
+      isTicking = true;
+    }
+  }, { passive: true });
+
+  /**
+   * Performs ONE direct, smooth, uninterrupted scroll to the target section
+   */
+  function smoothScrollToSection(sectionId) {
+    if (!sectionId) return;
+    const targetElement = document.getElementById(sectionId);
+    if (!targetElement) return;
+
+    const header = document.getElementById('main-header');
+    const headerHeight = header ? header.offsetHeight : 64;
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+    let targetY = 0;
+    if (sectionId === 'home') {
+      targetY = 0;
+    } else {
+      const rect = targetElement.getBoundingClientRect();
+      targetY = Math.min(Math.max(0, window.pageYOffset + rect.top - (headerHeight - 2)), maxScroll);
+    }
+
+    const currentY = window.pageYOffset || document.documentElement.scrollTop || 0;
+
+    // If clicking the current section and already in place, do nothing
+    if (Math.abs(currentY - targetY) < 5 && currentActiveId === sectionId) {
+      setActiveSection(sectionId, false);
+      return;
+    }
+
+    // Lock scroll-spy strictly for the duration of this navigation
+    isProgrammaticScroll = true;
+    targetSectionId = sectionId;
+    if (scrollRafId) cancelAnimationFrame(scrollRafId);
+    if (scrollSafetyTimer) clearTimeout(scrollSafetyTimer);
+
+    // 1. Instantly move the active indicator to the destination item in ONE direct animation
+    setActiveSection(sectionId, true);
+
+    const reduced = getPrefersReducedMotion();
+
+    if (reduced) {
+      window.scrollTo({ top: targetY, behavior: 'auto' });
+      isProgrammaticScroll = false;
+      targetSectionId = null;
+      if (history.pushState) history.pushState(null, null, `#${sectionId}`);
+      return;
+    }
+
+    // 2. Perform ONE direct smooth scroll
+    window.scrollTo({
+      top: targetY,
+      behavior: 'smooth'
+    });
+
+    if (history.pushState) {
+      history.pushState(null, null, `#${sectionId}`);
+    }
+
+    // 3. Monitor arrival using RAF convergence + native scrollend
+    let lastY = currentY;
+    let samePosFrames = 0;
+    const startTime = performance.now();
+
+    function checkArrival() {
+      if (!isProgrammaticScroll || targetSectionId !== sectionId) return;
+
+      const nowY = window.pageYOffset || document.documentElement.scrollTop || 0;
+      const dist = Math.abs(nowY - targetY);
+
+      if (Math.abs(nowY - lastY) < 1.5) {
+        samePosFrames++;
+      } else {
+        samePosFrames = 0;
+      }
+      lastY = nowY;
+
+      // Completed when within 4px of target, or settled for 6 consecutive frames, or 1.8s timeout
+      if (dist <= 4 || samePosFrames >= 6 || (performance.now() - startTime > 1800)) {
+        isProgrammaticScroll = false;
+        targetSectionId = null;
+        setActiveSection(sectionId, false);
+      } else {
+        scrollRafId = requestAnimationFrame(checkArrival);
+      }
+    }
+
+    // Native scrollend listener
+    const onScrollEnd = () => {
+      if (isProgrammaticScroll && targetSectionId === sectionId) {
+        isProgrammaticScroll = false;
+        targetSectionId = null;
+        if (scrollRafId) cancelAnimationFrame(scrollRafId);
+        setActiveSection(sectionId, false);
+      }
+      window.removeEventListener('scrollend', onScrollEnd);
+    };
+    window.addEventListener('scrollend', onScrollEnd, { once: true });
+
+    // Start convergence checking after 60ms
+    setTimeout(() => {
+      if (isProgrammaticScroll && targetSectionId === sectionId) {
+        scrollRafId = requestAnimationFrame(checkArrival);
+      }
+    }, 60);
+
+    // Hard fallback safety timer (2s max)
+    scrollSafetyTimer = setTimeout(() => {
+      if (isProgrammaticScroll && targetSectionId === sectionId) {
+        isProgrammaticScroll = false;
+        targetSectionId = null;
+        if (scrollRafId) cancelAnimationFrame(scrollRafId);
+        setActiveSection(sectionId, false);
+      }
+    }, 2000);
+  }
+
+  // Smooth click navigation for desktop nav links
+  navLinks.forEach((link) => {
+    link.addEventListener('click', function (e) {
+      const targetId = this.getAttribute('href');
+      if (!targetId || !targetId.startsWith('#')) return;
+      e.preventDefault();
+      const sectionId = targetId.substring(1);
+      smoothScrollToSection(sectionId);
     });
   });
-}
 
-/**
- * ScrollSpy: Update active state in desktop navigation as user scrolls
- */
-function initScrollSpy() {
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.nav-menu .nav-link');
+  // Smooth click navigation for mobile drawer and other page anchor links (e.g. Hero buttons)
+  const otherInternalLinks = document.querySelectorAll('a[href^="#"]:not(.nav-menu .nav-link)');
+  otherInternalLinks.forEach((link) => {
+    link.addEventListener('click', function (e) {
+      if (this.id === 'brand-link' || this.classList.contains('nav-brand')) return;
+      const targetId = this.getAttribute('href');
+      if (!targetId || !targetId.startsWith('#')) return;
+      e.preventDefault();
+      const sectionId = targetId.substring(1);
+      smoothScrollToSection(sectionId);
+    });
+  });
 
-  if (!sections.length || !navLinks.length) return;
+  // Significant wheel/drag interruption unlock
+  window.addEventListener('wheel', (e) => {
+    if (isProgrammaticScroll && Math.abs(e.deltaY) > 30) {
+      isProgrammaticScroll = false;
+      targetSectionId = null;
+      if (scrollRafId) cancelAnimationFrame(scrollRafId);
+      if (scrollSafetyTimer) clearTimeout(scrollSafetyTimer);
+    }
+  }, { passive: true });
 
-  const observerOptions = {
-    root: null,
-    rootMargin: '-20% 0px -70% 0px',
-    threshold: 0
-  };
+  window.addEventListener('touchmove', () => {
+    if (isProgrammaticScroll) {
+      isProgrammaticScroll = false;
+      targetSectionId = null;
+      if (scrollRafId) cancelAnimationFrame(scrollRafId);
+      if (scrollSafetyTimer) clearTimeout(scrollSafetyTimer);
+    }
+  }, { passive: true });
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const id = entry.target.getAttribute('id');
-        navLinks.forEach((link) => {
-          const href = link.getAttribute('href');
-          if (href === `#${id}`) {
-            link.classList.add('active');
-          } else {
-            link.classList.remove('active');
-          }
-        });
+  // Handle window resize and font load readjustments
+  window.addEventListener('resize', () => {
+    const active = document.querySelector('.nav-menu .nav-link.active:not(.nav-btn-status)');
+    if (active) {
+      updateIndicator(active, false);
+    }
+  }, { passive: true });
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      const active = document.querySelector('.nav-menu .nav-link.active:not(.nav-btn-status)');
+      if (active) {
+        updateIndicator(active, false);
       }
     });
-  }, observerOptions);
-
-  sections.forEach((section) => observer.observe(section));
+  }
 }
 
 /**
@@ -208,10 +472,10 @@ function initPageTransitions() {
       // Trigger smooth clinical exit animation on main page
       document.body.classList.add('page-transition-exiting');
 
-      // Smoothly navigate after the exit transition completes (350ms)
+      // Smoothly navigate after the exit transition completes (220ms)
       setTimeout(() => {
         window.location.href = targetUrl;
-      }, 350);
+      }, 220);
     });
   });
 

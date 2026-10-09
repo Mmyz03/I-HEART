@@ -5,7 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Unified Patient Health Intake Form - AI-Based Explainable Health Risk Prediction System for Diabetes and Cardiovascular Disease.">
   <title>Unified Patient Health Assessment | I-HEART Clinical AI</title>
-  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Instant Theme Loader (Zero Flash of Wrong Theme) -->
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('iheart_theme');
+        if (savedTheme === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="css/style.css?v=4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,14 +32,13 @@
   <!-- Navigation Bar -->
   <header class="header" id="assessment-header">
     <div class="nav-container">
-      <a href="index.html" class="nav-brand" id="brand-link" aria-label="I-HEART Clinical AI Home">
+      <a href="javascript:void(0)" class="nav-brand" id="brand-link" role="button" tabindex="0" aria-label="Switch to light mode" title="Switch to light mode" aria-pressed="false">
         <span class="brand-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
           </svg>
         </span>
         <span class="brand-text">I-HEART</span>
-        <span class="brand-badge">[CLINICAL AI]</span>
       </a>
 
       <div class="header-right-nav">
@@ -41,7 +57,7 @@
     <div class="content-container">
       
       <!-- Page Header -->
-      <div class="page-title-section">
+      <div class="page-title-section reveal-on-scroll">
         <div class="badge-pill">
           <span class="pulse-dot"></span>
           UNIFIED PATIENT INTAKE CONSOLE • DUAL-DISEASE PREDICTIVE EVALUATION
@@ -52,7 +68,7 @@
         </p>
 
         <!-- Quick Demo Autofill Bar -->
-        <div class="demo-autofill-banner">
+        <div class="demo-autofill-banner reveal-on-scroll reveal-delay-1">
           <div class="demo-text">
             <strong>[PRESET // DEMO CLINICAL PROFILES]:</strong> Load standardized clinical profiles to test inference response or enter real patient measurements.
           </div>
@@ -82,7 +98,7 @@
       <form id="unified-patient-form" novalidate>
 
         <!-- SECTION 1: Patient Information -->
-        <div class="form-section-card">
+        <div class="form-section-card reveal-on-scroll">
           <div class="section-card-header">
             <div class="section-num">01</div>
             <div>
@@ -128,7 +144,7 @@
         </div>
 
         <!-- SECTION 2: Physical Measurements -->
-        <div class="form-section-card">
+        <div class="form-section-card reveal-on-scroll">
           <div class="section-card-header">
             <div class="section-num">02</div>
             <div>
@@ -173,7 +189,7 @@
         </div>
 
         <!-- SECTION 3: Vital Signs -->
-        <div class="form-section-card">
+        <div class="form-section-card reveal-on-scroll">
           <div class="section-card-header">
             <div class="section-num">03</div>
             <div>
@@ -214,7 +230,7 @@
         </div>
 
         <!-- SECTION 4: Laboratory Information -->
-        <div class="form-section-card">
+        <div class="form-section-card reveal-on-scroll">
           <div class="section-card-header">
             <div class="section-num">04</div>
             <div>
@@ -282,7 +298,7 @@
         </div>
 
         <!-- SECTION 5: Lifestyle Information -->
-        <div class="form-section-card">
+        <div class="form-section-card reveal-on-scroll">
           <div class="section-card-header">
             <div class="section-num">05</div>
             <div>
@@ -338,7 +354,7 @@
         </div>
 
         <!-- SECTION 6: Medical History -->
-        <div class="form-section-card">
+        <div class="form-section-card reveal-on-scroll">
           <div class="section-card-header">
             <div class="section-num">06</div>
             <div>
@@ -424,7 +440,7 @@
         </div>
 
         <!-- Form Action Bar -->
-        <div class="form-action-bar">
+        <div class="form-action-bar reveal-on-scroll">
           <div class="action-left">
             <a href="index.html" class="btn btn-secondary" id="btn-back">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -457,7 +473,7 @@
       </form>
 
       <!-- Academic Disclaimer Note -->
-      <div class="disclaimer-note-box">
+      <div class="disclaimer-note-box reveal-on-scroll">
         <p>
           <strong>Clinical Research Notice:</strong> This unified intake module routes patient indicators to trained scikit-learn machine learning pipelines and XAI factor attribution models for Type 2 Diabetes and Cardiovascular Disease. This screening tool is designed to support clinical workflows and should be interpreted by qualified healthcare professionals.
         </p>
@@ -486,6 +502,16 @@
     </div>
   </footer>
 
+  <!-- Floating Back to Top Button -->
+  <button type="button" class="back-to-top-btn" id="btn-back-to-top" aria-label="Back to top" title="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="12" y1="19" x2="12" y2="5"></line>
+      <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+  </button>
+
+  <script src="js/theme.js"></script>
+  <script src="js/interactions.js"></script>
   <script src="js/assessment.js"></script>
 </body>
 </html>

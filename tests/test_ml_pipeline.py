@@ -4,6 +4,7 @@ AI-Based Explainable Health Risk Prediction System
 """
 
 import sys
+import json
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -22,8 +23,18 @@ from schemas import (
     LifestyleData,
     MedicalHistory
 )
-from services.diabetes_predictor import get_diabetes_artifacts, map_unified_to_diabetes_features, predict_diabetes
-from services.cvd_predictor import get_cvd_artifacts, map_unified_to_cvd_features, predict_cvd
+from services.diabetes_predictor import (
+    get_diabetes_artifacts,
+    map_unified_to_diabetes_features,
+    predict_diabetes,
+    DIABETES_OPERATING_THRESHOLD
+)
+from services.cvd_predictor import (
+    get_cvd_artifacts,
+    map_unified_to_cvd_features,
+    predict_cvd,
+    CVD_OPERATING_THRESHOLD
+)
 from services.prediction_service import analyze_unified_patient
 
 
@@ -179,6 +190,32 @@ def test_cvd_missing_optional_lipids():
     assert res.risk_level in ["Low", "Moderate", "High"]
 
 
+def test_diabetes_operating_threshold_configuration():
+    """Verify diabetes operating threshold is configured and yields clinical sensitivity > 70%."""
+    assert DIABETES_OPERATING_THRESHOLD == 0.53
+    meta_path = PROJECT_ROOT / "models" / "diabetes" / "metadata.json"
+    assert meta_path.exists()
+    with open(meta_path) as f:
+        meta = json.load(f)
+    assert meta["selected_operating_threshold"] == 0.53
+    assert meta["test_evaluation_metrics"]["recall"] >= 0.70
+    assert meta["test_evaluation_metrics"]["f1_score"] >= 0.49
+    assert meta["test_evaluation_metrics"]["roc_auc"] >= 0.83
+
+
+def test_cvd_operating_threshold_configuration():
+    """Verify CVD operating threshold is configured and achieves sensitivity > 70%."""
+    assert CVD_OPERATING_THRESHOLD == 0.48
+    meta_path = PROJECT_ROOT / "models" / "cardiovascular" / "metadata.json"
+    assert meta_path.exists()
+    with open(meta_path) as f:
+        meta = json.load(f)
+    assert meta["selected_operating_threshold"] == 0.48
+    assert meta["test_evaluation_metrics"]["recall"] >= 0.70
+    assert meta["test_evaluation_metrics"]["f1_score"] >= 0.62
+    assert meta["test_evaluation_metrics"]["roc_auc"] >= 0.74
+
+
 if __name__ == "__main__":
     print("Running ML Pipeline & Backend Tests...")
     test_diabetes_artifacts_load()
@@ -203,4 +240,8 @@ if __name__ == "__main__":
     print("PASS: Diabetes missing optional HbA1c test")
     test_cvd_missing_optional_lipids()
     print("PASS: CVD missing optional lipids test")
-    print("\nALL AUTOMATED TESTS PASSED SUCCESSFULLY (11/11)")
+    test_diabetes_operating_threshold_configuration()
+    print("PASS: Diabetes operating threshold configuration test")
+    test_cvd_operating_threshold_configuration()
+    print("PASS: CVD operating threshold configuration test")
+    print("\nALL AUTOMATED TESTS PASSED SUCCESSFULLY (13/13)")

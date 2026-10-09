@@ -20,6 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 MODEL_PATH = BASE_DIR / "models" / "cardiovascular" / "cvd_model.joblib"
 PREPROCESSOR_PATH = BASE_DIR / "models" / "cardiovascular" / "cvd_preprocessor.joblib"
 
+# Clinically optimized operating threshold selected via 5-fold cross-validation
+# Prioritizes screening sensitivity/recall (70.31% vs 67.77%) and F1 (0.6330 vs 0.6282)
+CVD_OPERATING_THRESHOLD = 0.48
+
 # Lazy-loaded model & preprocessor cache
 _cvd_model = None
 _cvd_preprocessor = None
@@ -138,7 +142,7 @@ def predict_cvd(patient: UnifiedPatientProfile) -> DiseaseRiskResult:
     # Preprocess & Predict
     X_trans = preprocessor.transform(df_features)
     prob = float(model.predict_proba(X_trans)[0, 1])
-    pred = int(model.predict(X_trans)[0])
+    pred = int(prob >= CVD_OPERATING_THRESHOLD)
 
     pct = int(min(max(round(prob * 100), 1), 99))
 
